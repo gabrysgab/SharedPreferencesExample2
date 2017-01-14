@@ -44,13 +44,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent editActivityIntent = new Intent(getApplicationContext(), EditActivity.class);
-                editActivityIntent.putExtra(NAME_KEY, textViewName.getText().toString());
-                editActivityIntent.putExtra(SURNAME_KEY, textViewSurname.getText().toString());
-                editActivityIntent.putExtra(LANGUAGE_KEY, textViewLanguage.getText().toString());
-                editActivityIntent.putExtra(COUNTRY_KEY, textViewCountry.getText().toString());
-
-                startActivity(editActivityIntent);
+                startSecondActivity();
 
             }
         });
@@ -84,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String getStringFromSharedPreferences(String sharedPreferencesKey) {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
-        String textToSet = sharedPreferences.getString(sharedPreferencesKey, "Default");
+        String textToSet = sharedPreferences.getString(sharedPreferencesKey, "");
         return textToSet;
     }
 
@@ -94,6 +88,18 @@ public class MainActivity extends AppCompatActivity {
         textViewSurname.setText(getStringFromSharedPreferences(SURNAME_KEY));
         textViewLanguage.setText(getStringFromSharedPreferences(LANGUAGE_KEY));
         textViewCountry.setText(getStringFromSharedPreferences(COUNTRY_KEY));
+
+
+    }
+
+    private void startSecondActivity() {
+        Intent editActivityIntent = new Intent(getApplicationContext(), EditActivity.class);
+        editActivityIntent.putExtra(NAME_KEY, textViewName.getText().toString());
+        editActivityIntent.putExtra(SURNAME_KEY, textViewSurname.getText().toString());
+        editActivityIntent.putExtra(LANGUAGE_KEY, textViewLanguage.getText().toString());
+        editActivityIntent.putExtra(COUNTRY_KEY, textViewCountry.getText().toString());
+
+        startActivityForResult(editActivityIntent, PICK_DATA_REQUEST);
 
 
     }

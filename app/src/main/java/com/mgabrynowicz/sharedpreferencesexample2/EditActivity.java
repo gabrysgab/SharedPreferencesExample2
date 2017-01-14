@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -39,6 +41,8 @@ public class EditActivity extends AppCompatActivity {
         buttonCancel = (Button) findViewById(R.id.button_cancel);
         spinnerCountry.setAdapter(new ArrayAdapter<Country>(this, android.R.layout.simple_spinner_dropdown_item, Country.values()));
         spinnerLanguage.setAdapter(new ArrayAdapter<Language>(this, android.R.layout.simple_spinner_dropdown_item, Language.values()));
+        checkIfFieldsEmpty();
+
 
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
@@ -50,10 +54,9 @@ public class EditActivity extends AppCompatActivity {
                 saveToSharedPrefenreces(COUNTRY_KEY, spinnerCountry.getSelectedItem().toString());
                 saveToSharedPrefenreces(LANGUAGE_KEY, spinnerLanguage.getSelectedItem().toString());
                 returnToMainActivity(RESULT_SAVED);
-
-
             }
         });
+
 
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +66,43 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkIfFieldsEmpty();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        };
+
+        editTextName.addTextChangedListener(textWatcher);
+        editTextSurname.addTextChangedListener(textWatcher);
+
+
+
+
+
+
+
+
+
+    }
+
+    private void checkIfFieldsEmpty() {
+        if(editTextName.getText().toString().isEmpty() && editTextSurname.getText().toString().isEmpty()) {
+            buttonSave.setEnabled(false);
+        } else {
+            buttonSave.setEnabled(true);
+        }
     }
 
 
@@ -87,8 +126,8 @@ public class EditActivity extends AppCompatActivity {
         Intent intent = getIntent();
         editTextName.setText(intent.getStringExtra(NAME_KEY));
         editTextSurname.setText(intent.getStringExtra(SURNAME_KEY));
-        String country = intent.getStringExtra(COUNTRY_KEY);
-        String language = intent.getStringExtra(LANGUAGE_KEY);
+        Enum<Country> country = Country.valueOf(intent.getStringExtra(COUNTRY_KEY));
+        Enum<Language> language = Language.valueOf(intent.getStringExtra(LANGUAGE_KEY));
         ArrayAdapter countryAdapter = (ArrayAdapter) spinnerCountry.getAdapter();
         ArrayAdapter languageAdapter = (ArrayAdapter) spinnerLanguage.getAdapter();
         spinnerCountry.setSelection(setSpinner(country, countryAdapter));
@@ -98,7 +137,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
 
-    public int setSpinner(String spinnerValue, ArrayAdapter spinnerAdapter) {
+    public int setSpinner(Enum spinnerValue, ArrayAdapter spinnerAdapter) {
         int spinnerPosition = 0;
 
         if (spinnerValue != null) {
@@ -110,9 +149,9 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void returnToMainActivity(int result) {
-        Intent intent = new Intent();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         setResult(result, intent);
-        startActivityForResult(intent, PICK_DATA_REQUEST);
+        finish();
 
 
     }
